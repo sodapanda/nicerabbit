@@ -37,5 +37,9 @@ dependencies {
     testImplementation("junit:junit:4.+")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    implementation ("com.arthenica:ffmpeg-kit-full:4.5")
+    implementation("com.arthenica:ffmpeg-kit-full:4.5")
+    implementation("com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751")
+    implementation("com.github.TeamNewPipe:NewPipeExtractor:7e7b78f1b3")
+    implementation("com.squareup.okhttp3:okhttp:3.12.13")
+    implementation("androidx.preference:preference:1.1.1")
 }

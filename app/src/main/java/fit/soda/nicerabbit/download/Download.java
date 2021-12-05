@@ -4,11 +4,18 @@ import android.content.Context;
 import android.os.Handler;
 import android.system.ErrnoException;
 import android.system.Os;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.arthenica.ffmpegkit.FFmpegKit;
 import com.arthenica.ffmpegkit.FFmpegSession;
 import com.arthenica.ffmpegkit.ReturnCode;
+
+import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.extractor.stream.VideoStream;
+
+import java.util.List;
 
 import goandroid.FfmpegCmd;
 import goandroid.Goandroid;
@@ -16,7 +23,7 @@ import goandroid.Goandroid;
 public class Download {
     public void get(Context context, Handler handler, String id) {
         try {
-            Os.setenv("HTTPS_PROXY","https://192.168.22.254:8080",true);
+            Os.setenv("HTTPS_PROXY", "https://192.168.22.254:8080", true);
         } catch (ErrnoException e) {
             e.printStackTrace();
         }
@@ -45,6 +52,23 @@ public class Download {
                         Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        }).start();
+    }
+
+    public void testNewPipe(Context context, Handler handler, String url) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    StreamInfo streamInfo = StreamInfo.getInfo(NewPipe.getService(0), url);
+                    List<VideoStream> streams = streamInfo.getVideoStreams();
+                    for (VideoStream stream : streams) {
+                        Log.i("newPipe", stream.getUrl());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }

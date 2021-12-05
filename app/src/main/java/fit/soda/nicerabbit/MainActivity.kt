@@ -13,7 +13,12 @@ class MainActivity : AppCompatActivity() {
         val handler = Handler()
         findViewById<View>(R.id.test_btn).setOnClickListener {
             val download = Download()
-            download.get(this@MainActivity, handler, "3VGsiayxVRA")
+//            download.get(this@MainActivity, handler, "3VGsiayxVRA")
+            download.testNewPipe(
+                this@MainActivity,
+                handler,
+                "https://www.youtube.com/watch?v=w4FpRaczI5U"
+            )
         }
     }
 }
