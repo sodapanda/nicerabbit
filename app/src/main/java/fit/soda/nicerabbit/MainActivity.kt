@@ -12,10 +12,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<View>(R.id.test_btn).setOnClickListener {
-            Download.testNewPipe("https://www.youtube.com/watch?v=1uDfnHoPq3w") {
+            Download.testNewPipe("https://www.youtube.com/watch?v=1uDfnHoPq3w") { videoUrl, subtitleUrl ->
                 this@MainActivity.runOnUiThread {
                     val intent = Intent(this@MainActivity, PlayVideoAct::class.java)
-                    intent.putExtra("url", it)
+                    intent.putExtra("url", videoUrl)
+                    intent.putExtra("subtitleUrl", subtitleUrl)
                     startActivity(intent)
                 }
             }

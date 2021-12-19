@@ -42,5 +42,6 @@ dependencies {
     implementation("com.github.TeamNewPipe:NewPipeExtractor:0.21.12")
     implementation("com.squareup.okhttp3:okhttp:3.12.13")
     implementation("androidx.preference:preference:1.1.1")
-    implementation ("com.google.android.exoplayer:exoplayer:2.16.1")
+    implementation("com.google.android.exoplayer:exoplayer:2.16.1")
+    implementation("com.github.kevinsawicki:http-request:6.0")
 }

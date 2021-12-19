@@ -13,13 +13,13 @@ class MainApp : Application() {
         NewPipe.init(getDownloader())
     }
 
-    protected fun getDownloader(): Downloader? {
+    private fun getDownloader(): Downloader {
         val downloader: DownloaderImpl = DownloaderImpl.init(null)
         setCookiesToDownloader(downloader)
         return downloader
     }
 
-    protected fun setCookiesToDownloader(downloader: DownloaderImpl) {
+    private fun setCookiesToDownloader(downloader: DownloaderImpl) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(
             applicationContext
         )

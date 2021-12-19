@@ -13,6 +13,7 @@ import com.arthenica.ffmpegkit.ReturnCode;
 
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 
 import java.util.List;
@@ -62,11 +63,19 @@ public class Download {
             public void run() {
                 try {
                     StreamInfo streamInfo = StreamInfo.getInfo(NewPipe.getService(0), url);
+
+                    // 字幕
+                    String subtitleUrl = "";
+                    for (SubtitlesStream subtitlesStream : streamInfo.getSubtitles()) {
+                        subtitleUrl = subtitlesStream.getUrl();
+                    }
+
+                    // 视频
                     List<VideoStream> streams = streamInfo.getVideoStreams();
                     for (VideoStream stream : streams) {
                         if (stream.getQuality().equals("medium")) {
                             Log.i("nicerabbit", stream.getUrl());
-                            listener.onResponse(stream.getUrl());
+                            listener.onResponse(stream.getUrl(), subtitleUrl);
                             break;
                         }
                     }
@@ -78,6 +87,6 @@ public class Download {
     }
 
     public interface StreamListener {
-        void onResponse(String url);
+        void onResponse(String videoUrl, String subtitleUrl);
     }
 }
