@@ -56,7 +56,7 @@ public class Download {
         }).start();
     }
 
-    public void testNewPipe(Context context, Handler handler, String url) {
+    public static void testNewPipe(String url, StreamListener listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -64,12 +64,20 @@ public class Download {
                     StreamInfo streamInfo = StreamInfo.getInfo(NewPipe.getService(0), url);
                     List<VideoStream> streams = streamInfo.getVideoStreams();
                     for (VideoStream stream : streams) {
-                        Log.i("newPipe", stream.getUrl());
+                        if (stream.getQuality().equals("medium")) {
+                            Log.i("nicerabbit", stream.getUrl());
+                            listener.onResponse(stream.getUrl());
+                            break;
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+    }
+
+    public interface StreamListener {
+        void onResponse(String url);
     }
 }
