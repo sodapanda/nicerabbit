@@ -75,7 +75,7 @@ public class Download {
                     for (VideoStream stream : streams) {
                         if (stream.getQuality().equals("medium")) {
                             Log.i("nicerabbit", stream.getUrl());
-                            listener.onResponse(stream.getUrl(), subtitleUrl);
+                            listener.onResponse(stream.getUrl(), subtitleUrl,stream.getWidth(),stream.getHeight());
                             break;
                         }
                     }
@@ -87,6 +87,6 @@ public class Download {
     }
 
     public interface StreamListener {
-        void onResponse(String videoUrl, String subtitleUrl);
+        void onResponse(String videoUrl, String subtitleUrl,int width,int height);
     }
 }

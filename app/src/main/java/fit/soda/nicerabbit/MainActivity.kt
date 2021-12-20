@@ -12,11 +12,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<View>(R.id.test_btn).setOnClickListener {
-            Download.testNewPipe("https://www.youtube.com/watch?v=1uDfnHoPq3w") { videoUrl, subtitleUrl ->
+            Download.testNewPipe("https://www.youtube.com/watch?v=1uDfnHoPq3w") { videoUrl, subtitleUrl, width, height ->
                 this@MainActivity.runOnUiThread {
                     val intent = Intent(this@MainActivity, PlayVideoAct::class.java)
                     intent.putExtra("url", videoUrl)
                     intent.putExtra("subtitleUrl", subtitleUrl)
+                    intent.putExtra("videoSizeRatio", "${width}:${height}")
                     startActivity(intent)
                 }
             }
