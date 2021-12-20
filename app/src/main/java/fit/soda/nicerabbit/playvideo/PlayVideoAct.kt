@@ -9,6 +9,7 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.PlayerView
 import fit.soda.nicerabbit.R
 import fit.soda.nicerabbit.httpclient.HttpApi
+import fit.soda.nicerabbit.subtitle.SubtitleUtils
 
 class PlayVideoAct : AppCompatActivity() {
     private lateinit var exoPlayer: ExoPlayer
@@ -46,7 +47,17 @@ class PlayVideoAct : AppCompatActivity() {
 
     private fun downloadSubtitle() {
         httpApi.subtitle(subtitleUrl) {
-            findViewById<TextView>(R.id.subtitle_view).text = it
+            val subtitleView = findViewById<TextView>(R.id.subtitle_view)
+            val subUtils = SubtitleUtils()
+            val subtitle = subUtils.convert(it)
+            subtitle.content.forEach { sub ->
+                subtitleView.append(sub.second + "\n")
+            }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        exoPlayer.stop()
     }
 }

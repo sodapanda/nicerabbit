@@ -2,7 +2,6 @@ package fit.soda.nicerabbit.newpipe;
 
 
 import android.content.Context;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,35 +12,21 @@ import org.schabi.newpipe.extractor.downloader.Response;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
-
 import fit.soda.nicerabbit.BuildConfig;
-import okhttp3.CipherSuite;
-import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 
 public final class DownloaderImpl extends Downloader {
     public static boolean DEBUG = BuildConfig.DEBUG;
-    public static final String USER_AGENT
-            = "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0";
-    public static final String YOUTUBE_RESTRICTED_MODE_COOKIE_KEY
-            = "youtube_restricted_mode_key";
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0";
+    public static final String YOUTUBE_RESTRICTED_MODE_COOKIE_KEY = "youtube_restricted_mode_key";
     public static final String YOUTUBE_RESTRICTED_MODE_COOKIE = "PREF=f2=8000000";
     public static final String YOUTUBE_DOMAIN = "youtube.com";
 
@@ -50,11 +35,9 @@ public final class DownloaderImpl extends Downloader {
     private final OkHttpClient client;
 
     private DownloaderImpl(final OkHttpClient.Builder builder) {
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            enableModernTLS(builder);
-        }
         this.client = builder
                 .readTimeout(30, TimeUnit.SECONDS)
+//                .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.22.254", 8080)))
 //                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
 //                        16 * 1024 * 1024))
                 .build();
@@ -75,55 +58,6 @@ public final class DownloaderImpl extends Downloader {
 
     public static DownloaderImpl getInstance() {
         return instance;
-    }
-
-    /**
-     * Enable TLS 1.2 and 1.1 on Android Kitkat. This function is mostly taken
-     * from the documentation of OkHttpClient.Builder.sslSocketFactory(_,_).
-     * <p>
-     * If there is an error, the function will safely fall back to doing nothing
-     * and printing the error to the console.
-     * </p>
-     *
-     * @param builder The HTTPClient Builder on which TLS is enabled on (will be modified in-place)
-     */
-    private static void enableModernTLS(final OkHttpClient.Builder builder) {
-        try {
-            // get the default TrustManager
-            final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
-                    TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init((KeyStore) null);
-            final TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-            if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-                throw new IllegalStateException("Unexpected default trust managers:"
-                        + Arrays.toString(trustManagers));
-            }
-            final X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
-
-            // insert our own TLSSocketFactory
-            final SSLSocketFactory sslSocketFactory = TLSSocketFactoryCompat.getInstance();
-
-            builder.sslSocketFactory(sslSocketFactory, trustManager);
-
-            // This will try to enable all modern CipherSuites(+2 more)
-            // that are supported on the device.
-            // Necessary because some servers (e.g. Framatube.org)
-            // don't support the old cipher suites.
-            // https://github.com/square/okhttp/issues/4053#issuecomment-402579554
-            final List<CipherSuite> cipherSuites =
-                    new ArrayList<>(ConnectionSpec.MODERN_TLS.cipherSuites());
-            cipherSuites.add(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA);
-            cipherSuites.add(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA);
-            final ConnectionSpec legacyTLS = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                    .cipherSuites(cipherSuites.toArray(new CipherSuite[0]))
-                    .build();
-
-            builder.connectionSpecs(Arrays.asList(legacyTLS, ConnectionSpec.CLEARTEXT));
-        } catch (final KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
-            if (DEBUG) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public String getCookies(final String url) {
@@ -170,23 +104,6 @@ public final class DownloaderImpl extends Downloader {
             removeCookie(YOUTUBE_RESTRICTED_MODE_COOKIE_KEY);
         }
         InfoCache.getInstance().clearCache();
-    }
-
-    /**
-     * Get the size of the content that the url is pointing by firing a HEAD request.
-     *
-     * @param url an url pointing to the content
-     * @return the size of the content, in bytes
-     */
-    public long getContentLength(final String url) throws IOException {
-        try {
-            final Response response = head(url);
-            return Long.parseLong(response.getHeader("Content-Length"));
-        } catch (final NumberFormatException e) {
-            throw new IOException("Invalid content length", e);
-        } catch (final ReCaptchaException e) {
-            throw new IOException(e);
-        }
     }
 
     @Override
