@@ -1,6 +1,7 @@
 package fit.soda.nicerabbit.playvideo
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -13,7 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.exoplayer2.util.MimeTypes
 import fit.soda.nicerabbit.R
 import fit.soda.nicerabbit.httpclient.HttpApi
 import fit.soda.nicerabbit.subtitle.Subtitle
@@ -50,9 +52,10 @@ class PlayVideoAct : AppCompatActivity() {
     }
 
     private fun setupVideoView() {
-        val playerView = findViewById<PlayerView>(R.id.player_view)
+        val playerView = findViewById<StyledPlayerView>(R.id.player_view)
         (playerView.layoutParams as ConstraintLayout.LayoutParams).dimensionRatio = videoSizeRatio
 
+        playerView.setShowSubtitleButton(true)
         playerView.player = exoPlayer
     }
 
@@ -64,13 +67,20 @@ class PlayVideoAct : AppCompatActivity() {
     }
 
     private fun startPlay() {
-        val mediaItem = MediaItem.fromUri(videoUrl)
+        val subtitle = MediaItem.SubtitleConfiguration.Builder(Uri.parse(subtitleUrl))
+            .setMimeType(MimeTypes.APPLICATION_TTML)
+            .setLanguage("eng")
+            .setLabel("eng sub")
+            .build()
+
+        val mediaItem = MediaItem.Builder()
+            .setUri(videoUrl)
+            .setSubtitleConfigurations(listOf(subtitle))
+            .build()
 
         exoPlayer.setMediaItem(mediaItem)
         exoPlayer.prepare()
         exoPlayer.play()
-
-
     }
 
     private fun downloadSubtitle() {
@@ -84,11 +94,13 @@ class PlayVideoAct : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         exoPlayer.stop()
+        exoPlayer.release()
     }
 }
 
 class MViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val subtitleTv: TextView = itemView.findViewById(R.id.subtitle_tv)
+    val bgHighLight: View = itemView.findViewById(R.id.bg_high_light)
 }
 
 class MAdapter : RecyclerView.Adapter<MViewHolder>() {
