@@ -6,13 +6,13 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.StringReader
 
 class SubtitleUtils {
-    fun convert(ttml: String): Subtitle {
+    fun convert(ttml: String): List<Subtitle> {
         val parser: XmlPullParser = Xml.newPullParser()
         parser.setInput(StringReader(ttml))
-        val subtitle = Subtitle()
+        val subtitleList = ArrayList<Subtitle>()
+        var currentSubtitle = Subtitle()
         var eventType = parser.eventType
         var readingContent = false
-        var subItem: Pair<String, String> = Pair("", "")
         while (eventType != XmlPullParser.END_DOCUMENT) {
             when (eventType) {
                 XmlPullParser.START_TAG -> {
@@ -24,30 +24,35 @@ class SubtitleUtils {
                     )
                     if (parser.name == "p") {
                         readingContent = true
-                        subItem = Pair("${begin}:${end}", "")
+                        currentSubtitle = Subtitle()
+                        currentSubtitle.begin = begin
+                        currentSubtitle.end = end
                     }
                 }
                 XmlPullParser.TEXT -> {
                     if (readingContent) {
                         Log.i("nicerabbit", "text content:${parser.text}")
-                        subItem = subItem.copy(second = parser.text)
+                        currentSubtitle.text = parser.text
                     }
                 }
                 XmlPullParser.END_TAG -> {
                     Log.i("nicerabbit", "end tag:${parser.name} ")
                     if (parser.name == "p") {
                         readingContent = false
-                        subtitle.content.add(subItem)
+                        subtitleList.add(currentSubtitle)
                     }
                 }
             }
 
             eventType = parser.next()
         }
-        return subtitle
+        return subtitleList
     }
 }
 
 class Subtitle {
-    val content: MutableList<Pair<String, String>> = ArrayList()
+    var text: String? = ""
+    var highLight: Boolean = false
+    var begin: String? = ""
+    var end: String? = ""
 }
