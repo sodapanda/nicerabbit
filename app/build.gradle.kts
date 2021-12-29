@@ -44,4 +44,7 @@ dependencies {
     implementation("androidx.preference:preference:1.1.1")
     implementation("com.google.android.exoplayer:exoplayer:2.16.1")
     implementation("com.github.kevinsawicki:http-request:6.0")
+    implementation("io.reactivex:rxjava:1.3.8")
+    implementation("io.reactivex:rxandroid:1.2.1")
+    implementation("com.guolindev.permissionx:permissionx:1.6.1")
 }

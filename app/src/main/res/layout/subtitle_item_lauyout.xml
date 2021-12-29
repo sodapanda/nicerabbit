@@ -10,17 +10,19 @@
         android:layout_height="0dp"
         android:background="#00ffff"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/subtitle_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         android:includeFontPadding="false"
+        android:text="good"
         android:textColor="#000000"
         android:textSize="18dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -29,8 +31,8 @@
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#999999"
-        app:layout_constraintTop_toBottomOf="@id/subtitle_tv" />
+        android:layout_height="10dp"
+        app:layout_constraintBottom_toBottomOf="@id/subtitle_tv"
+        app:layout_constraintTop_toBottomOf="@+id/subtitle_tv" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
